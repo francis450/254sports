@@ -1,0 +1,614 @@
+/* ============================================================
+   254 Sports — Quick Sale Page
+   Brand palette:
+     Kenya Red    #CC2200
+     Savanna Green #006B3C
+     Night Black  #0D0D0D
+     Summit White #FFFFFF
+     Cream bg     #F8F5F0
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap');
+
+/* ── CSS Variables ─────────────────────────────────────────── */
+:root {
+  --qs-red:    #CC2200;
+  --qs-green:  #006B3C;
+  --qs-black:  #0D0D0D;
+  --qs-white:  #FFFFFF;
+  --qs-cream:  #F8F5F0;
+  --qs-grey:   #E4E0D8;
+  --qs-muted:  #7A7570;
+  --qs-radius: 8px;
+  --qs-shadow: 0 2px 12px rgba(13,13,13,.10);
+}
+
+/* ── Root container ────────────────────────────────────────── */
+.qs-root {
+  background: var(--qs-cream);
+  min-height: 100vh;
+  font-family: 'Barlow', sans-serif;
+  color: var(--qs-black);
+  padding: 0 0 40px;
+}
+
+/* ── Page Header ───────────────────────────────────────────── */
+.qs-header {
+  background: var(--qs-black);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.qs-header-brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.qs-wordmark {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.06em;
+  /* Diagonal split: left half red, right half green */
+  background: linear-gradient(105deg, var(--qs-red) 48%, var(--qs-black) 48%, var(--qs-black) 52%, var(--qs-green) 52%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.qs-tagline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--qs-muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ── Warehouse toggle ──────────────────────────────────────── */
+#qs-warehouse-toggle {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qs-wh-pill {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 2px solid var(--qs-muted);
+  background: transparent;
+  color: var(--qs-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qs-wh-pill:hover {
+  border-color: var(--qs-red);
+  color: var(--qs-red);
+}
+
+.qs-wh-pill.active {
+  background: var(--qs-red);
+  border-color: var(--qs-red);
+  color: var(--qs-white);
+}
+
+/* ── Layout: two-column ────────────────────────────────────── */
+.qs-layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 20px;
+  max-width: 1280px;
+  margin: 24px auto 0;
+  padding: 0 24px;
+}
+
+@media (max-width: 900px) {
+  .qs-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Card ──────────────────────────────────────────────────── */
+.qs-card {
+  background: var(--qs-white);
+  border-radius: var(--qs-radius);
+  box-shadow: var(--qs-shadow);
+  overflow: hidden;
+}
+
+/* Diagonal band card header */
+.qs-card-header {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--qs-white);
+  padding: 12px 20px;
+  position: relative;
+  overflow: hidden;
+  background: var(--qs-black);
+}
+
+.qs-card-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    var(--qs-red) 0%,
+    var(--qs-red) 44%,
+    var(--qs-black) 44%,
+    var(--qs-black) 48%,
+    var(--qs-green) 48%,
+    var(--qs-green) 100%
+  );
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  z-index: 0;
+}
+
+.qs-card-header span {
+  position: relative;
+  z-index: 1;
+}
+
+.qs-card-body {
+  padding: 20px;
+}
+
+/* ── Form fields ───────────────────────────────────────────── */
+.qs-field-group {
+  margin-bottom: 20px;
+}
+
+.qs-label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+  margin-bottom: 6px;
+}
+
+.qs-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--qs-grey);
+  border-radius: var(--qs-radius);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  color: var(--qs-black);
+  background: var(--qs-cream);
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.qs-input:focus {
+  outline: none;
+  border-color: var(--qs-red);
+  background: var(--qs-white);
+}
+
+/* ── Item rows ─────────────────────────────────────────────── */
+.qs-items-header {
+  display: grid;
+  grid-template-columns: 1fr 72px 96px 32px;
+  gap: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+  padding: 0 0 4px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--qs-grey);
+}
+
+.qs-item-row {
+  display: grid;
+  grid-template-columns: 1fr 72px 96px 32px;
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+.qs-item-search-col {
+  position: relative;
+}
+
+.qs-item-stock-badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.qs-stock-ok {
+  background: #D4EDDA;
+  color: var(--qs-green);
+}
+
+.qs-stock-none {
+  background: #FDECEA;
+  color: var(--qs-red);
+}
+
+.qs-item-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background: var(--qs-white);
+  border: 1.5px solid var(--qs-grey);
+  border-radius: var(--qs-radius);
+  box-shadow: var(--qs-shadow);
+  z-index: 1000;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.qs-dd-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--qs-grey);
+  transition: background 0.1s ease;
+}
+
+.qs-dd-item:last-child {
+  border-bottom: none;
+}
+
+.qs-dd-item:hover {
+  background: var(--qs-cream);
+}
+
+.qs-dd-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.qs-dd-stock {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.qs-dd-stock.qs-stock-ok {
+  color: var(--qs-green);
+  background: transparent;
+}
+
+.qs-dd-stock.qs-stock-none {
+  color: var(--qs-red);
+  background: transparent;
+}
+
+.qs-dd-empty {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: var(--qs-muted);
+}
+
+.qs-btn-del-item {
+  background: none;
+  border: none;
+  color: var(--qs-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 8px 0;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.qs-btn-del-item:hover {
+  color: var(--qs-red);
+}
+
+.qs-btn-add-item {
+  background: none;
+  border: 1.5px dashed var(--qs-grey);
+  border-radius: var(--qs-radius);
+  width: 100%;
+  padding: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.15s ease;
+}
+
+.qs-btn-add-item:hover {
+  border-color: var(--qs-green);
+  color: var(--qs-green);
+  background: rgba(0,107,60,0.04);
+}
+
+/* ── Payment tiles ─────────────────────────────────────────── */
+.qs-payment-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.qs-pay-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border: 2px solid var(--qs-grey);
+  border-radius: var(--qs-radius);
+  background: var(--qs-cream);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qs-pay-tile:hover {
+  border-color: var(--qs-black);
+}
+
+.qs-pay-icon {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.qs-pay-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+}
+
+/* Active states per mode */
+.qs-pay-tile[data-mode="Cash"].active,
+.qs-pay-tile[data-mode="M-Pesa"].active {
+  border-color: var(--qs-green);
+  background: rgba(0,107,60,0.07);
+}
+
+.qs-pay-tile[data-mode="Cash"].active .qs-pay-label,
+.qs-pay-tile[data-mode="M-Pesa"].active .qs-pay-label {
+  color: var(--qs-green);
+}
+
+.qs-pay-tile[data-mode="Bank Transfer"].active {
+  border-color: #1A6BB5;
+  background: rgba(26,107,181,0.07);
+}
+
+.qs-pay-tile[data-mode="Bank Transfer"].active .qs-pay-label {
+  color: #1A6BB5;
+}
+
+.qs-pay-tile[data-mode="Credit"].active {
+  border-color: var(--qs-red);
+  background: rgba(204,34,0,0.07);
+}
+
+.qs-pay-tile[data-mode="Credit"].active .qs-pay-label {
+  color: var(--qs-red);
+}
+
+.qs-credit-note {
+  font-size: 0.78rem;
+  color: var(--qs-red);
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: rgba(204,34,0,0.07);
+  border-radius: 4px;
+  border-left: 3px solid var(--qs-red);
+}
+
+/* ── Total bar ─────────────────────────────────────────────── */
+.qs-total-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-top: 2px solid var(--qs-grey);
+  padding-top: 16px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
+
+.qs-total-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--qs-muted);
+  text-transform: uppercase;
+}
+
+.qs-total-amount {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  color: var(--qs-black);
+  letter-spacing: 0.02em;
+}
+
+/* ── Submit button ─────────────────────────────────────────── */
+.qs-submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--qs-red);
+  color: var(--qs-white);
+  border: none;
+  border-radius: var(--qs-radius);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.qs-submit-btn:hover {
+  background: #A81C00;
+}
+
+.qs-submit-btn:active {
+  transform: scale(0.99);
+}
+
+.qs-submit-btn:disabled {
+  background: var(--qs-muted);
+  cursor: not-allowed;
+}
+
+/* ── Feed panel ────────────────────────────────────────────── */
+.qs-feed-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.qs-feed-header {
+  background: var(--qs-black);
+  border-radius: var(--qs-radius) var(--qs-radius) 0 0;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qs-feed-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+}
+
+.qs-feed-daily-total {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--qs-white);
+  letter-spacing: 0.02em;
+}
+
+.qs-feed-list {
+  background: var(--qs-white);
+  border-radius: 0 0 var(--qs-radius) var(--qs-radius);
+  box-shadow: var(--qs-shadow);
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.qs-feed-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--qs-muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.qs-feed-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--qs-grey);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.qs-feed-row:last-child {
+  border-bottom: none;
+}
+
+.qs-feed-row:hover {
+  background: var(--qs-cream);
+}
+
+.qs-feed-customer {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--qs-black);
+  margin-bottom: 2px;
+}
+
+.qs-feed-items {
+  font-size: 0.78rem;
+  color: var(--qs-muted);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qs-feed-row-right {
+  text-align: right;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.qs-feed-amount {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--qs-black);
+}
+
+.qs-feed-meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: var(--qs-muted);
+}
+
+/* ── Badges ────────────────────────────────────────────────── */
+.qs-badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.qs-badge-paid {
+  background: #D4EDDA;
+  color: var(--qs-green);
+}
+
+.qs-badge-credit {
+  background: #FDECEA;
+  color: var(--qs-red);
+}
+
+/* ── Hide Frappe default page title bar for this page ──────── */
+.page-head .page-title,
+.page-head .title-area {
+  display: none !important;
+}

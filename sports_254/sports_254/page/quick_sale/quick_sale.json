@@ -1,0 +1,19 @@
+{
+ "doctype": "Page",
+ "module": "Sports 254",
+ "name": "quick-sale",
+ "page_name": "quick-sale",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Sales Manager"
+  }
+ ],
+ "standard": "Yes",
+ "title": "Quick Sale"
+}
