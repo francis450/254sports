@@ -121,6 +121,7 @@ def submit_quick_sale(customer_name, warehouse, items, payment_mode):
     invoice.posting_time = now_datetime().strftime("%H:%M:%S")
     invoice.set_warehouse = warehouse
     invoice.update_stock = 1  # deduct stock at invoice submission
+    invoice.is_pos = 0  # prevent POS validation; payments handled via Payment Entry
 
     # Determine income account (default)
     company = frappe.defaults.get_defaults().get("company") or frappe.db.get_single_value(
