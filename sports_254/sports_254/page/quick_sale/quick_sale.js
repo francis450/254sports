@@ -114,10 +114,10 @@ class QuickSalePage {
   async _loadWarehouses() {
     const data = await frappe.call({ method: "sports_254.api.get_warehouses" });
     this.warehouses = (data && data.message) || [];
+    // Only restore a warehouse the user explicitly chose before — never auto-select.
     const saved = localStorage.getItem("qs_warehouse");
-    const first = this.warehouses[0] && this.warehouses[0].name;
     this.selectedWarehouse =
-      (saved && this.warehouses.find((w) => w.name === saved) ? saved : null) || first;
+      (saved && this.warehouses.find((w) => w.name === saved)) ? saved : null;
     this._renderWarehouseToggle();
   }
 
@@ -135,6 +135,24 @@ class QuickSalePage {
         })
         .appendTo($toggle);
     });
+    this._updateFormState();
+  }
+
+  _updateFormState() {
+    const ready = !!this.selectedWarehouse;
+    // Disable submit until a warehouse is intentionally chosen.
+    $("#qs-submit").prop("disabled", !ready).toggleClass("qs-submit-disabled", !ready);
+    // Show/hide the warehouse prompt banner inside the header.
+    if (!ready) {
+      if (!$("#qs-wh-required").length) {
+        $('<div class="qs-wh-required" id="qs-wh-required">Select a store above before recording a sale.</div>')
+          .appendTo(".qs-header");
+      }
+      $("#qs-feed-list").html('<div class="qs-feed-empty">Select a store to view today\'s sales.</div>');
+      $("#qs-daily-total").text("KES 0.00");
+    } else {
+      $("#qs-wh-required").remove();
+    }
   }
 
   // ── Payment tiles ──────────────────────────────────────────────────────────
@@ -371,6 +389,7 @@ class QuickSalePage {
   }
 
   _renderFeed(invoices) {
+    const self = this;
     const $list = $("#qs-feed-list").empty();
     if (!invoices.length) {
       $list.html('<div class="qs-feed-empty">No sales recorded today.</div>');
@@ -380,12 +399,18 @@ class QuickSalePage {
     let dayTotal = 0;
     invoices.forEach((inv) => {
       dayTotal += inv.grand_total || 0;
-      const isPaid = inv.outstanding_amount === 0;
+      const isPaid = (inv.outstanding_amount || 0) === 0;
       const badge = isPaid
         ? '<span class="qs-badge qs-badge-paid">Paid</span>'
         : '<span class="qs-badge qs-badge-credit">Credit</span>';
       const time = (inv.posting_time || "").substring(0, 5);
-      $(`<div class="qs-feed-row" data-invoice="${frappe.utils.escape_html(inv.name)}">
+      const markPaidBtn = !isPaid
+        ? `<button class="qs-mark-paid-btn" data-invoice="${frappe.utils.escape_html(inv.name)}"
+              data-customer="${frappe.utils.escape_html(inv.customer)}"
+              data-amount="${inv.outstanding_amount}"
+              title="Record payment for this invoice">Mark Paid</button>`
+        : "";
+      const $row = $(`<div class="qs-feed-row" data-invoice="${frappe.utils.escape_html(inv.name)}">
           <div class="qs-feed-row-left">
             <div class="qs-feed-customer">${frappe.utils.escape_html(inv.customer)}</div>
             <div class="qs-feed-items">${frappe.utils.escape_html(inv.items_summary || "")}</div>
@@ -393,13 +418,65 @@ class QuickSalePage {
           <div class="qs-feed-row-right">
             <div class="qs-feed-amount">KES ${format_number(inv.grand_total, null, 2)}</div>
             <div class="qs-feed-meta">${time} ${badge}</div>
+            ${markPaidBtn}
           </div>
-         </div>`)
-        .on("click", function () {
-          frappe.set_route("Form", "Sales Invoice", $(this).data("invoice"));
-        })
-        .appendTo($list);
+         </div>`);
+
+      $row.find(".qs-mark-paid-btn").on("click", function (e) {
+        e.stopPropagation();
+        self._showMarkPaidDialog(
+          $(this).data("invoice"),
+          $(this).data("customer"),
+          parseFloat($(this).data("amount"))
+        );
+      });
+
+      $row.on("click", function () {
+        frappe.set_route("Form", "Sales Invoice", $(this).data("invoice"));
+      });
+
+      $row.appendTo($list);
     });
     $("#qs-daily-total").text("KES " + format_number(dayTotal, null, 2));
+  }
+
+  // ── Mark credit invoice as paid ────────────────────────────────────────────
+  _showMarkPaidDialog(invoiceName, customer, outstandingAmount) {
+    const self = this;
+    frappe.prompt(
+      [
+        {
+          fieldtype: "Select",
+          fieldname: "payment_mode",
+          label: "Payment Mode",
+          options: "Cash\nM-Pesa\nBank Transfer",
+          default: "Cash",
+          reqd: 1,
+        },
+      ],
+      (values) => {
+        self._doMarkPaid(invoiceName, values.payment_mode);
+      },
+      `Mark Paid — ${customer}`,
+      `Confirm KES ${format_number(outstandingAmount, null, 2)}`
+    );
+  }
+
+  async _doMarkPaid(invoiceName, paymentMode) {
+    try {
+      const result = await frappe.call({
+        method: "sports_254.api.mark_invoice_paid",
+        args: { invoice_name: invoiceName, payment_mode: paymentMode },
+      });
+      if (result && result.message) {
+        frappe.show_alert(
+          { message: `✓ ${invoiceName} marked as paid`, indicator: "green" },
+          5
+        );
+        this._refreshFeed();
+      }
+    } catch (_) {
+      // frappe.call displays the server error automatically
+    }
   }
 }

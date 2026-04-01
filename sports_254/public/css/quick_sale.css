@@ -632,6 +632,51 @@
 }
 
 
+/* ── Warehouse required banner ─────────────────────────────── */
+.qs-wh-required {
+  width: 100%;
+  background: var(--qs-red);
+  color: var(--qs-white);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px 12px;
+  margin-top: 8px;
+}
+
+/* ── Submit button — disabled state ────────────────────────── */
+.qs-submit-btn:disabled,
+.qs-submit-btn.qs-submit-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Mark Paid button (feed row) ───────────────────────────── */
+.qs-mark-paid-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1.5px solid var(--qs-green);
+  background: transparent;
+  color: var(--qs-green);
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.qs-mark-paid-btn:hover {
+  background: var(--qs-green);
+  color: var(--qs-white);
+}
+
 /* ── Hide Frappe default page title bar for this page ──────── */
 .page-head .page-title,
 .page-head .title-area {

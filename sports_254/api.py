@@ -187,6 +187,55 @@ def submit_quick_sale(customer_name, warehouse, items, payment_mode):
     }
 
 
+@frappe.whitelist(methods=["POST"])
+def mark_invoice_paid(invoice_name, payment_mode):
+    """
+    Create and submit a Payment Entry for an existing outstanding Sales Invoice,
+    marking it as paid. Called from the Quick Sale feed's "Mark Paid" button.
+    """
+    invoice = frappe.get_doc("Sales Invoice", invoice_name)
+
+    if invoice.docstatus != 1:
+        frappe.throw(_("Invoice {0} is not submitted.").format(invoice_name))
+    if (invoice.outstanding_amount or 0) <= 0:
+        frappe.throw(_("Invoice {0} has no outstanding amount.").format(invoice_name))
+
+    company = invoice.company
+
+    mode_map = {
+        "Cash": _get_cash_account(company),
+        "M-Pesa": _get_mpesa_account(company),
+        "Bank Transfer": _get_bank_account(company),
+    }
+    paid_to = mode_map.get(payment_mode) or _get_cash_account(company)
+
+    pe = frappe.new_doc("Payment Entry")
+    pe.payment_type = "Receive"
+    pe.company = company
+    pe.posting_date = nowdate()
+    pe.party_type = "Customer"
+    pe.party = invoice.customer
+    pe.paid_amount = invoice.outstanding_amount
+    pe.received_amount = invoice.outstanding_amount
+    pe.paid_to = paid_to
+    pe.paid_from = frappe.db.get_value("Company", company, "default_receivable_account")
+    pe.reference_no = invoice.name
+    pe.reference_date = nowdate()
+    pe.append(
+        "references",
+        {
+            "reference_doctype": "Sales Invoice",
+            "reference_name": invoice.name,
+            "allocated_amount": invoice.outstanding_amount,
+        },
+    )
+    pe.insert(ignore_permissions=True)
+    pe.submit()
+    frappe.db.commit()
+
+    return {"payment_entry": pe.name, "invoice": invoice_name}
+
+
 @frappe.whitelist()
 def get_item_groups():
     """Return leaf item groups for the category filter."""
