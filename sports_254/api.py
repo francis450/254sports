@@ -187,6 +187,138 @@ def submit_quick_sale(customer_name, warehouse, items, payment_mode):
     }
 
 
+@frappe.whitelist()
+def get_item_groups():
+    """Return leaf item groups for the category filter."""
+    return frappe.get_all(
+        "Item Group",
+        filters={"is_group": 0},
+        fields=["name"],
+        order_by="name asc",
+    )
+
+
+@frappe.whitelist()
+def get_sales_report(from_date, to_date, payment_status="All", customer=None,
+                     item_code=None, item_group=None, warehouse=None):
+    """
+    Return filtered sales data for the Sales Report page.
+    Runs two queries:
+      1. Invoices matching all filters.
+      2. Credit customers summary (outstanding > 0, same date/optional filters).
+    """
+    # ── Build shared conditions & values ──────────────────────────────────────
+    conditions = [
+        "si.docstatus = 1",
+        "si.posting_date BETWEEN %(from_date)s AND %(to_date)s",
+    ]
+    values = {"from_date": from_date, "to_date": to_date}
+
+    need_item_join = False
+
+    if customer:
+        conditions.append("si.customer LIKE %(customer)s")
+        values["customer"] = f"%{customer}%"
+
+    if item_code:
+        conditions.append(
+            "(sii.item_code LIKE %(item_code)s OR sii.item_name LIKE %(item_code)s)"
+        )
+        values["item_code"] = f"%{item_code}%"
+
+    if item_group:
+        conditions.append("i.item_group = %(item_group)s")
+        values["item_group"] = item_group
+        need_item_join = True
+
+    if warehouse:
+        conditions.append(
+            "(si.set_warehouse = %(warehouse)s OR sii.warehouse = %(warehouse)s)"
+        )
+        values["warehouse"] = warehouse
+
+    item_join = (
+        "LEFT JOIN `tabItem` i ON i.item_code = sii.item_code"
+        if need_item_join else ""
+    )
+
+    # ── 1. Invoices query ──────────────────────────────────────────────────────
+    invoice_conditions = list(conditions)
+    if payment_status == "Paid":
+        invoice_conditions.append("si.outstanding_amount = 0")
+    elif payment_status == "Credit":
+        invoice_conditions.append("si.outstanding_amount > 0")
+
+    where_invoices = " AND ".join(invoice_conditions)
+
+    invoices = frappe.db.sql(
+        f"""
+        SELECT
+            si.name,
+            si.customer,
+            si.posting_date,
+            si.posting_time,
+            si.grand_total,
+            si.outstanding_amount,
+            si.status,
+            GROUP_CONCAT(
+                CONCAT(sii.qty, 'x ', sii.item_name)
+                ORDER BY sii.idx ASC
+                SEPARATOR ', '
+            ) AS items_summary
+        FROM `tabSales Invoice` si
+        INNER JOIN `tabSales Invoice Item` sii ON sii.parent = si.name
+        {item_join}
+        WHERE {where_invoices}
+        GROUP BY si.name
+        ORDER BY si.posting_date DESC, si.posting_time DESC
+        """,
+        values,
+        as_dict=True,
+    )
+
+    # ── 2. Credit customers summary ────────────────────────────────────────────
+    credit_conditions = list(conditions)
+    credit_conditions.append("si.outstanding_amount > 0")
+    where_credit = " AND ".join(credit_conditions)
+
+    credit_customers = frappe.db.sql(
+        f"""
+        SELECT
+            si.customer,
+            SUM(si.outstanding_amount) AS total_outstanding,
+            COUNT(si.name) AS invoice_count,
+            MIN(si.posting_date) AS oldest_date
+        FROM `tabSales Invoice` si
+        INNER JOIN `tabSales Invoice Item` sii ON sii.parent = si.name
+        {item_join}
+        WHERE {where_credit}
+        GROUP BY si.customer
+        ORDER BY total_outstanding DESC
+        """,
+        values,
+        as_dict=True,
+    )
+
+    # ── 3. Summary totals ──────────────────────────────────────────────────────
+    total_sales = sum(inv.grand_total or 0 for inv in invoices)
+    total_outstanding = sum(inv.outstanding_amount or 0 for inv in invoices)
+    total_paid = total_sales - total_outstanding
+    credit_count = sum(1 for inv in invoices if (inv.outstanding_amount or 0) > 0)
+
+    return {
+        "invoices": invoices,
+        "summary": {
+            "total_sales": total_sales,
+            "total_paid": total_paid,
+            "total_outstanding": total_outstanding,
+            "invoice_count": len(invoices),
+            "credit_count": credit_count,
+        },
+        "credit_customers": credit_customers,
+    }
+
+
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
 

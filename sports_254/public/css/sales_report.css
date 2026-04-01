@@ -1,0 +1,351 @@
+/* ============================================================
+   254 Sports — Sales Report Page
+   Shares brand variables with quick_sale.css
+   ============================================================ */
+
+/* ── Root ──────────────────────────────────────────────────── */
+.sr-root {
+  background: var(--qs-cream);
+  min-height: 100vh;
+  font-family: 'Barlow', sans-serif;
+  color: var(--qs-black);
+  padding: 0 0 48px;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.sr-header {
+  background: var(--qs-black);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+}
+
+.sr-header-brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.sr-wordmark {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.06em;
+  background: linear-gradient(105deg, var(--qs-red) 48%, var(--qs-black) 48%, var(--qs-black) 52%, var(--qs-green) 52%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sr-tagline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--qs-muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ── Filters bar ───────────────────────────────────────────── */
+.sr-filters-bar {
+  background: var(--qs-white);
+  border-bottom: 2px solid var(--qs-grey);
+  padding: 16px 28px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.sr-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sr-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+}
+
+.sr-input {
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  padding: 7px 10px;
+  border: 1.5px solid var(--qs-grey);
+  border-radius: var(--qs-radius);
+  background: var(--qs-white);
+  color: var(--qs-black);
+  outline: none;
+  transition: border-color 0.15s;
+  min-width: 140px;
+}
+
+.sr-input:focus {
+  border-color: var(--qs-red);
+}
+
+.sr-select {
+  cursor: pointer;
+}
+
+/* ── Status tabs ───────────────────────────────────────────── */
+.sr-status-tabs {
+  display: flex;
+  gap: 0;
+  border: 1.5px solid var(--qs-grey);
+  border-radius: var(--qs-radius);
+  overflow: hidden;
+}
+
+.sr-tab {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border: none;
+  background: var(--qs-white);
+  color: var(--qs-muted);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.sr-tab:not(:last-child) {
+  border-right: 1.5px solid var(--qs-grey);
+}
+
+.sr-tab.active,
+.sr-tab:hover {
+  background: var(--qs-red);
+  color: var(--qs-white);
+}
+
+/* ── Run button ────────────────────────────────────────────── */
+.sr-filter-run {
+  justify-content: flex-end;
+}
+
+.sr-run-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 28px;
+  background: var(--qs-green);
+  color: var(--qs-white);
+  border: none;
+  border-radius: var(--qs-radius);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sr-run-btn:hover {
+  background: #00522e;
+}
+
+.sr-run-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Body ──────────────────────────────────────────────────── */
+.sr-body {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Empty / loading states ────────────────────────────────── */
+.sr-empty-state,
+.sr-loading {
+  font-family: 'Barlow', sans-serif;
+  color: var(--qs-muted);
+  font-size: 0.95rem;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* ── Summary cards ─────────────────────────────────────────── */
+.sr-summary-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sr-summary-card {
+  flex: 1 1 180px;
+  background: var(--qs-white);
+  border-radius: var(--qs-radius);
+  box-shadow: var(--qs-shadow);
+  padding: 20px 24px;
+  border-top: 4px solid var(--qs-grey);
+}
+
+.sr-summary-paid {
+  border-top-color: var(--qs-green);
+}
+
+.sr-summary-credit {
+  border-top-color: var(--qs-red);
+}
+
+.sr-summary-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+  margin-bottom: 6px;
+}
+
+.sr-summary-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 0.03em;
+  color: var(--qs-black);
+  line-height: 1;
+}
+
+.sr-summary-sub {
+  font-size: 0.8rem;
+  color: var(--qs-muted);
+  margin-top: 4px;
+}
+
+/* ── Sections ──────────────────────────────────────────────── */
+.sr-section {
+  background: var(--qs-white);
+  border-radius: var(--qs-radius);
+  box-shadow: var(--qs-shadow);
+  overflow: hidden;
+}
+
+.sr-section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--qs-white);
+  background: var(--qs-black);
+  padding: 10px 18px;
+}
+
+/* ── Tables ────────────────────────────────────────────────── */
+.sr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.sr-table thead tr {
+  background: var(--qs-cream);
+  border-bottom: 2px solid var(--qs-grey);
+}
+
+.sr-table th {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+  padding: 10px 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.sr-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--qs-grey);
+  vertical-align: middle;
+}
+
+.sr-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sr-invoice-row,
+.sr-credit-row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.sr-invoice-row:hover,
+.sr-credit-row:hover {
+  background: #f0ece4;
+}
+
+.sr-num {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-items-cell {
+  color: var(--qs-muted);
+  font-size: 0.82rem;
+  max-width: 280px;
+}
+
+.sr-invoice-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  color: var(--qs-red);
+}
+
+.sr-time {
+  color: var(--qs-muted);
+  font-size: 0.8rem;
+}
+
+.sr-amount-owed {
+  font-weight: 600;
+  color: var(--qs-red);
+}
+
+/* ── Badges ────────────────────────────────────────────────── */
+.sr-badge {
+  display: inline-block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.sr-badge-paid {
+  background: #d4edda;
+  color: #0a5c2e;
+}
+
+.sr-badge-credit {
+  background: #ffe0db;
+  color: #8b1a00;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sr-filters-bar {
+    padding: 14px 16px;
+  }
+  .sr-body {
+    padding: 16px;
+  }
+  .sr-table th,
+  .sr-table td {
+    padding: 8px 10px;
+  }
+  .sr-items-cell {
+    display: none;
+  }
+}

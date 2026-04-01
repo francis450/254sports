@@ -32,9 +32,6 @@ frappe.pages["quick-sale"].on_page_load = function (wrapper) {
 
           <div class="qs-field-group">
             <label class="qs-label">Items</label>
-            <div class="qs-items-header">
-              <span>Item</span><span>Qty</span><span>Rate (KES)</span><span></span>
-            </div>
             <div id="qs-items-table"></div>
             <button class="qs-btn-add-item" id="qs-add-item">+ Add Item</button>
           </div>
@@ -174,14 +171,18 @@ class QuickSalePage {
           <div class="qs-item-stock-badge" style="display:none;"></div>
           <div class="qs-item-dropdown" style="display:none;"></div>
         </div>
-        <div class="qs-item-qty-col">
-          <input type="number" class="qs-input qs-item-qty" value="1" min="1" step="1" />
-        </div>
-        <div class="qs-item-rate-col">
-          <input type="number" class="qs-input qs-item-rate" value="0" min="0" step="0.01" />
-        </div>
-        <div class="qs-item-del-col">
-          <button class="qs-btn-del-item" title="Remove">✕</button>
+        <div class="qs-item-controls-row">
+          <div class="qs-item-qty-col">
+            <span class="qs-sublabel">Qty</span>
+            <input type="number" class="qs-input qs-item-qty" value="1" min="1" step="1" />
+          </div>
+          <div class="qs-item-rate-col">
+            <span class="qs-sublabel">Rate (KES)</span>
+            <input type="number" class="qs-input qs-item-rate" value="0" min="0" step="0.01" />
+          </div>
+          <div class="qs-item-del-col">
+            <button class="qs-btn-del-item" title="Remove">✕</button>
+          </div>
         </div>
       </div>
     `);

@@ -1,0 +1,19 @@
+{
+ "doctype": "Page",
+ "module": "Sports 254",
+ "name": "sales-report",
+ "page_name": "sales-report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Sales Manager"
+  }
+ ],
+ "standard": "Yes",
+ "title": "Sales Report"
+}

@@ -202,31 +202,55 @@
 }
 
 /* ── Item rows ─────────────────────────────────────────────── */
-.qs-items-header {
-  display: grid;
-  grid-template-columns: 1fr 72px 96px 32px;
-  gap: 8px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--qs-muted);
-  padding: 0 0 4px;
-  margin-bottom: 4px;
+.qs-item-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--qs-grey);
 }
 
-.qs-item-row {
-  display: grid;
-  grid-template-columns: 1fr 72px 96px 32px;
-  gap: 8px;
-  align-items: start;
-  margin-bottom: 8px;
+.qs-item-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .qs-item-search-col {
   position: relative;
+  width: 100%;
+}
+
+.qs-item-controls-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.qs-item-qty-col {
+  flex: 0 0 80px;
+}
+
+.qs-item-rate-col {
+  flex: 1 1 auto;
+}
+
+.qs-item-del-col {
+  flex: 0 0 32px;
+  display: flex;
+  align-items: center;
+  padding-bottom: 2px;
+}
+
+.qs-sublabel {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qs-muted);
+  margin-bottom: 3px;
 }
 
 .qs-item-stock-badge {
@@ -606,6 +630,7 @@
   background: #FDECEA;
   color: var(--qs-red);
 }
+
 
 /* ── Hide Frappe default page title bar for this page ──────── */
 .page-head .page-title,
