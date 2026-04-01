@@ -512,10 +512,50 @@
 .qs-feed-header {
   background: var(--qs-black);
   border-radius: var(--qs-radius) var(--qs-radius) 0 0;
-  padding: 16px 20px;
+  padding: 16px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qs-feed-header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* ── Period tabs (Today / This Week / This Month) ──────────── */
+.qs-feed-period-tabs {
+  display: flex;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  overflow: hidden;
+  align-self: flex-start;
+}
+
+.qs-period-tab {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.qs-period-tab:not(:last-child) {
+  border-right: 1.5px solid rgba(255,255,255,0.18);
+}
+
+.qs-period-tab.active,
+.qs-period-tab:hover {
+  background: var(--qs-red);
+  color: var(--qs-white);
 }
 
 .qs-feed-title {

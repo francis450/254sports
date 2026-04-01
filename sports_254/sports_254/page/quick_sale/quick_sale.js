@@ -74,8 +74,15 @@ frappe.pages["quick-sale"].on_page_load = function (wrapper) {
 
     <section class="qs-feed-panel">
       <div class="qs-feed-header">
-        <div class="qs-feed-title">Today's Sales</div>
-        <div class="qs-feed-daily-total" id="qs-daily-total">KES 0.00</div>
+        <div class="qs-feed-header-top">
+          <div class="qs-feed-title" id="qs-feed-title">Today's Sales</div>
+          <div class="qs-feed-daily-total" id="qs-daily-total">KES 0.00</div>
+        </div>
+        <div class="qs-feed-period-tabs" id="qs-feed-period-tabs">
+          <button class="qs-period-tab active" data-period="today">Today</button>
+          <button class="qs-period-tab" data-period="week">This Week</button>
+          <button class="qs-period-tab" data-period="month">This Month</button>
+        </div>
       </div>
       <div class="qs-feed-list" id="qs-feed-list">
         <div class="qs-feed-empty">No sales recorded today.</div>
@@ -97,6 +104,7 @@ class QuickSalePage {
     this.warehouses = [];
     this.selectedWarehouse = null;
     this.paymentMode = "Cash";
+    this.feedPeriod = "today";
     this.items = [];
     this._init();
   }
@@ -106,6 +114,7 @@ class QuickSalePage {
     this._bindPaymentTiles();
     this._bindAddItem();
     this._bindSubmit();
+    this._bindFeedPeriodTabs();
     this._addItemRow();
     this._refreshFeed();
   }
@@ -136,6 +145,23 @@ class QuickSalePage {
         .appendTo($toggle);
     });
     this._updateFormState();
+  }
+
+  // ── Feed period tabs ───────────────────────────────────────────────────────
+  _bindFeedPeriodTabs() {
+    const self = this;
+    const titles = {
+      today: "Today's Sales",
+      week: "This Week's Sales",
+      month: "This Month's Sales",
+    };
+    $("#qs-feed-period-tabs").on("click", ".qs-period-tab", function () {
+      $(".qs-period-tab").removeClass("active");
+      $(this).addClass("active");
+      self.feedPeriod = $(this).data("period");
+      $("#qs-feed-title").text(titles[self.feedPeriod]);
+      self._refreshFeed();
+    });
   }
 
   _updateFormState() {
@@ -382,8 +408,8 @@ class QuickSalePage {
   async _refreshFeed() {
     if (!this.selectedWarehouse) return;
     const data = await frappe.call({
-      method: "sports_254.api.get_today_sales",
-      args: { warehouse: this.selectedWarehouse },
+      method: "sports_254.api.get_period_sales",
+      args: { warehouse: this.selectedWarehouse, period: this.feedPeriod },
     });
     this._renderFeed((data && data.message) || []);
   }
@@ -403,7 +429,11 @@ class QuickSalePage {
       const badge = isPaid
         ? '<span class="qs-badge qs-badge-paid">Paid</span>'
         : '<span class="qs-badge qs-badge-credit">Credit</span>';
-      const time = (inv.posting_time || "").substring(0, 5);
+      const hhmm = (inv.posting_time || "").substring(0, 5);
+      // For week/month views show the date so multi-day rows are distinguishable.
+      const time = this.feedPeriod === "today"
+        ? hhmm
+        : `${(inv.posting_date || "").substring(5).replace("-", "/")} ${hhmm}`;
       const markPaidBtn = !isPaid
         ? `<button class="qs-mark-paid-btn" data-invoice="${frappe.utils.escape_html(inv.name)}"
               data-customer="${frappe.utils.escape_html(inv.customer)}"

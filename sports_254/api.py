@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from frappe.utils import nowdate, now_datetime
+from frappe.utils import nowdate, now_datetime, getdate, add_days, get_first_day
 
 
 @frappe.whitelist()
@@ -234,6 +234,54 @@ def mark_invoice_paid(invoice_name, payment_mode):
     frappe.db.commit()
 
     return {"payment_entry": pe.name, "invoice": invoice_name}
+
+
+@frappe.whitelist()
+def get_period_sales(warehouse, period="today"):
+    """Return Sales Invoices for the given warehouse within the requested period.
+    period: "today" | "week" (Mon–today) | "month" (1st–today)
+    """
+    today = nowdate()
+
+    if period == "week":
+        from_date = add_days(today, -getdate(today).weekday())  # rewind to Monday
+    elif period == "month":
+        from_date = str(get_first_day(today))
+    else:
+        from_date = today
+
+    invoices = frappe.db.sql(
+        """
+        SELECT
+            si.name,
+            si.customer,
+            si.grand_total,
+            si.posting_date,
+            si.posting_time,
+            si.outstanding_amount,
+            si.status,
+            GROUP_CONCAT(
+                CONCAT(sii.qty, 'x ', sii.item_name)
+                ORDER BY sii.idx ASC
+                SEPARATOR ', '
+            ) AS items_summary
+        FROM `tabSales Invoice` si
+        INNER JOIN `tabSales Invoice Item` sii ON sii.parent = si.name
+        WHERE
+            si.docstatus = 1
+            AND si.posting_date BETWEEN %(from_date)s AND %(today)s
+            AND (
+                si.set_warehouse = %(warehouse)s
+                OR (si.set_warehouse IS NULL AND sii.warehouse = %(warehouse)s)
+                OR (si.set_warehouse = '' AND sii.warehouse = %(warehouse)s)
+            )
+        GROUP BY si.name
+        ORDER BY si.posting_date DESC, si.posting_time DESC
+        """,
+        {"from_date": from_date, "today": today, "warehouse": warehouse},
+        as_dict=True,
+    )
+    return invoices
 
 
 @frappe.whitelist()
