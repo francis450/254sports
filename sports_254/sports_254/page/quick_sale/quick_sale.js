@@ -129,6 +129,28 @@ class QuickSalePage {
 
   _renderWarehouseToggle() {
     const $toggle = $("#qs-warehouse-toggle").empty();
+    if (!this.warehouses.length) {
+      $('<div class="qs-wh-required">No warehouse access has been assigned to your user.</div>')
+        .appendTo($toggle);
+      this._updateFormState();
+      return;
+    }
+
+    if (this.warehouses.length === 1) {
+      const warehouse = this.warehouses[0];
+      const active = warehouse.name === this.selectedWarehouse ? "active" : "";
+      $(`<button class="qs-wh-pill ${active}" data-wh="${warehouse.name}">${frappe.utils.escape_html(warehouse.warehouse_name)}</button>`)
+        .on("click", (e) => {
+          this.selectedWarehouse = $(e.currentTarget).data("wh");
+          this._renderWarehouseToggle();
+          this._refreshFeed();
+          this._refreshAllItemStock();
+        })
+        .appendTo($toggle);
+      this._updateFormState();
+      return;
+    }
+
     this.warehouses.forEach((w) => {
       const active = w.name === this.selectedWarehouse ? "active" : "";
       $(`<button class="qs-wh-pill ${active}" data-wh="${w.name}">${frappe.utils.escape_html(w.warehouse_name)}</button>`)
@@ -167,10 +189,16 @@ class QuickSalePage {
     // Show/hide the warehouse prompt banner inside the header.
     if (!ready) {
       if (!$("#qs-wh-required").length) {
-        $('<div class="qs-wh-required" id="qs-wh-required">Select a store above before recording a sale.</div>')
+        const message = this.warehouses.length
+          ? "Select a store above before recording a sale."
+          : "No warehouse access has been assigned to your user.";
+        $(`<div class="qs-wh-required" id="qs-wh-required">${message}</div>`)
           .appendTo(".qs-header");
       }
-      $("#qs-feed-list").html('<div class="qs-feed-empty">Select a store to view today\'s sales.</div>');
+      const emptyMessage = this.warehouses.length
+        ? "Select a store to view today's sales."
+        : "You do not have access to any warehouse sales.";
+      $("#qs-feed-list").html(`<div class="qs-feed-empty">${emptyMessage}</div>`);
       $("#qs-daily-total").text("KES 0.00");
     } else {
       $("#qs-wh-required").remove();

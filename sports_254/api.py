@@ -57,9 +57,7 @@ def search_items(query, warehouse):
 @frappe.whitelist()
 def get_today_sales(warehouse):
     """Return all Sales Invoices posted today for the given warehouse."""
-    allowed = _get_allowed_warehouses()
-    if allowed is not None and warehouse not in allowed:
-        frappe.throw(_("You do not have permission to access warehouse {0}.").format(warehouse))
+    _require_allowed_warehouse(warehouse, _("You do not have permission to access warehouse {0}."))
     today = nowdate()
     invoices = frappe.db.sql(
         """
@@ -333,6 +331,18 @@ def get_sales_report(from_date, to_date, payment_status="All", customer=None,
         _require_allowed_warehouse(
             warehouse, _("You do not have permission to view data for warehouse {0}.")
         )
+    if allowed == set():
+        return {
+            "invoices": [],
+            "summary": {
+                "total_sales": 0,
+                "total_paid": 0,
+                "total_outstanding": 0,
+                "invoice_count": 0,
+                "credit_count": 0,
+            },
+            "credit_customers": [],
+        }
     if not warehouse and allowed is not None:
         wh_list_sql = ", ".join(frappe.db.escape(w) for w in allowed)
         conditions.append(
@@ -498,8 +508,9 @@ def _get_bank_account(company):
 
 def _get_allowed_warehouses():
     """Return a set of permitted warehouse names for the current user.
-    Returns None when the user is unrestricted (Administrator, System Manager,
-    or no Warehouse User Permissions configured for this user).
+    Returns None when the user is unrestricted (Administrator or System Manager).
+    Returns an empty set for regular users with no Warehouse User Permissions,
+    making warehouse access opt-in for this custom app.
     """
     if frappe.session.user == "Administrator":
         return None
@@ -511,7 +522,7 @@ def _get_allowed_warehouses():
         fields=["for_value"],
     )
     if not perms:
-        return None  # no warehouse restrictions — user can access all
+        return set()
     return {p.for_value for p in perms}
 
 
