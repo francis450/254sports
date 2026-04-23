@@ -106,11 +106,26 @@ class SalesReportPage {
     const data = await frappe.call({ method: "sports_254.api.get_warehouses" });
     const warehouses = (data && data.message) || [];
     const $sel = $("#sr-warehouse");
+    $sel.empty();
+
+    if (!warehouses.length) {
+      $sel.append('<option value="">No Warehouse Access</option>');
+      $sel.prop("disabled", true);
+      $("#sr-run").prop("disabled", true).text("No Warehouse Access");
+      $("#sr-body").html('<div class="sr-empty-state">No warehouse access has been assigned to your user.</div>');
+      return;
+    }
+
+    if (warehouses.length > 1) {
+      $sel.append('<option value="">All Allowed Warehouses</option>');
+    }
+
     warehouses.forEach((w) => {
       $sel.append(`<option value="${frappe.utils.escape_html(w.name)}">${frappe.utils.escape_html(w.warehouse_name)}</option>`);
     });
     if (warehouses.length === 1) {
-      $sel.val(warehouses[0].name); // user has one allowed warehouse — pre-select it
+      $sel.val(warehouses[0].name);
+      $sel.prop("disabled", true);
     }
   }
 
