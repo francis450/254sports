@@ -123,10 +123,7 @@ class QuickSalePage {
   async _loadWarehouses() {
     const data = await frappe.call({ method: "sports_254.api.get_warehouses" });
     this.warehouses = (data && data.message) || [];
-    // Only restore a warehouse the user explicitly chose before — never auto-select.
-    const saved = localStorage.getItem("qs_warehouse");
-    this.selectedWarehouse =
-      (saved && this.warehouses.find((w) => w.name === saved)) ? saved : null;
+    this.selectedWarehouse = null; // always require deliberate selection each session
     this._renderWarehouseToggle();
   }
 
@@ -137,7 +134,6 @@ class QuickSalePage {
       $(`<button class="qs-wh-pill ${active}" data-wh="${w.name}">${frappe.utils.escape_html(w.warehouse_name)}</button>`)
         .on("click", (e) => {
           this.selectedWarehouse = $(e.currentTarget).data("wh");
-          localStorage.setItem("qs_warehouse", this.selectedWarehouse);
           this._renderWarehouseToggle();
           this._refreshFeed();
           this._refreshAllItemStock();
@@ -396,10 +392,12 @@ class QuickSalePage {
     this.items = [];
     $("#qs-items-table").empty();
     this._addItemRow();
+    this.selectedWarehouse = null;
     this.paymentMode = "Cash";
     $(".qs-pay-tile").removeClass("active");
     $(".qs-pay-tile[data-mode='Cash']").addClass("active");
     $("#qs-credit-note").hide();
+    this._renderWarehouseToggle();
     this._updateSubmitLabel();
     this._updateTotal();
   }

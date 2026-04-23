@@ -5,13 +5,16 @@ from frappe.utils import nowdate, now_datetime, getdate, add_days, get_first_day
 
 @frappe.whitelist()
 def get_warehouses():
-    """Return all warehouses for the warehouse toggle."""
+    """Return warehouses for the warehouse toggle, scoped to the user's permissions."""
     warehouses = frappe.get_all(
         "Warehouse",
         filters={"is_group": 0, "disabled": 0, "warehouse_type": ["!=", "Transit"]},
         fields=["name", "warehouse_name"],
         order_by="warehouse_name asc",
     )
+    allowed = _get_allowed_warehouses()
+    if allowed is not None:
+        warehouses = [w for w in warehouses if w.name in allowed]
     return warehouses
 
 
@@ -20,6 +23,7 @@ def search_items(query, warehouse):
     """Search items by name/code with stock level from Bin for the given warehouse."""
     if not query:
         return []
+    _require_allowed_warehouse(warehouse, _("You do not have permission to access warehouse {0}."))
 
     items = frappe.db.sql(
         """
@@ -53,6 +57,9 @@ def search_items(query, warehouse):
 @frappe.whitelist()
 def get_today_sales(warehouse):
     """Return all Sales Invoices posted today for the given warehouse."""
+    allowed = _get_allowed_warehouses()
+    if allowed is not None and warehouse not in allowed:
+        frappe.throw(_("You do not have permission to access warehouse {0}.").format(warehouse))
     today = nowdate()
     invoices = frappe.db.sql(
         """
@@ -103,6 +110,10 @@ def submit_quick_sale(customer_name, warehouse, items, payment_mode):
 
     if not items:
         frappe.throw(_("Please add at least one item."))
+
+    _require_allowed_warehouse(
+        warehouse, _("You do not have permission to record sales for warehouse {0}.")
+    )
 
     # ── 1. Resolve customer ────────────────────────────────────────────────────
     customer_name = (customer_name or "").strip()
@@ -194,6 +205,10 @@ def mark_invoice_paid(invoice_name, payment_mode):
     marking it as paid. Called from the Quick Sale feed's "Mark Paid" button.
     """
     invoice = frappe.get_doc("Sales Invoice", invoice_name)
+    invoice_warehouse = _get_sales_invoice_warehouse(invoice_name)
+    _require_allowed_warehouse(
+        invoice_warehouse, _("You do not have permission to access warehouse {0}.")
+    )
 
     if invoice.docstatus != 1:
         frappe.throw(_("Invoice {0} is not submitted.").format(invoice_name))
@@ -241,6 +256,7 @@ def get_period_sales(warehouse, period="today"):
     """Return Sales Invoices for the given warehouse within the requested period.
     period: "today" | "week" (Mon–today) | "month" (1st–today)
     """
+    _require_allowed_warehouse(warehouse, _("You do not have permission to access warehouse {0}."))
     today = nowdate()
 
     if period == "week":
@@ -310,6 +326,18 @@ def get_sales_report(from_date, to_date, payment_status="All", customer=None,
         "si.posting_date BETWEEN %(from_date)s AND %(to_date)s",
     ]
     values = {"from_date": from_date, "to_date": to_date}
+
+    # Enforce User Permission warehouse restrictions
+    allowed = _get_allowed_warehouses()
+    if warehouse:
+        _require_allowed_warehouse(
+            warehouse, _("You do not have permission to view data for warehouse {0}.")
+        )
+    if not warehouse and allowed is not None:
+        wh_list_sql = ", ".join(frappe.db.escape(w) for w in allowed)
+        conditions.append(
+            f"(si.set_warehouse IN ({wh_list_sql}) OR sii.warehouse IN ({wh_list_sql}))"
+        )
 
     need_item_join = False
 
@@ -466,6 +494,59 @@ def _get_bank_account(company):
     if not acc:
         acc = _get_cash_account(company)
     return acc
+
+
+def _get_allowed_warehouses():
+    """Return a set of permitted warehouse names for the current user.
+    Returns None when the user is unrestricted (Administrator, System Manager,
+    or no Warehouse User Permissions configured for this user).
+    """
+    if frappe.session.user == "Administrator":
+        return None
+    if "System Manager" in frappe.get_roles(frappe.session.user):
+        return None
+    perms = frappe.get_all(
+        "User Permission",
+        filters={"user": frappe.session.user, "allow": "Warehouse"},
+        fields=["for_value"],
+    )
+    if not perms:
+        return None  # no warehouse restrictions — user can access all
+    return {p.for_value for p in perms}
+
+
+def _require_allowed_warehouse(warehouse, permission_message=None):
+    warehouse = (warehouse or "").strip()
+    if not warehouse:
+        frappe.throw(_("Please select a warehouse."))
+
+    allowed = _get_allowed_warehouses()
+    if allowed is not None and warehouse not in allowed:
+        permission_message = permission_message or _("You do not have permission to access warehouse {0}.")
+        frappe.throw(permission_message.format(warehouse))
+
+    return warehouse
+
+
+def _get_sales_invoice_warehouse(invoice_name):
+    warehouse = frappe.db.get_value("Sales Invoice", invoice_name, "set_warehouse")
+    if warehouse:
+        return warehouse
+
+    item_warehouses = frappe.get_all(
+        "Sales Invoice Item",
+        filters={"parent": invoice_name},
+        pluck="warehouse",
+        distinct=True,
+    )
+    item_warehouses = [warehouse for warehouse in item_warehouses if warehouse]
+    if len(item_warehouses) == 1:
+        return item_warehouses[0]
+
+    if not item_warehouses:
+        frappe.throw(_("Invoice {0} has no warehouse assigned.").format(invoice_name))
+
+    frappe.throw(_("Invoice {0} spans multiple warehouses and cannot be handled here.").format(invoice_name))
 
 
 def _get_mpesa_account(company):

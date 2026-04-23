@@ -109,6 +109,9 @@ class SalesReportPage {
     warehouses.forEach((w) => {
       $sel.append(`<option value="${frappe.utils.escape_html(w.name)}">${frappe.utils.escape_html(w.warehouse_name)}</option>`);
     });
+    if (warehouses.length === 1) {
+      $sel.val(warehouses[0].name); // user has one allowed warehouse — pre-select it
+    }
   }
 
   async _loadItemGroups() {
