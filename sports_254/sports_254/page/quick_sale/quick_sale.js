@@ -124,7 +124,15 @@ class QuickSalePage {
   async _loadWarehouses() {
     const data = await frappe.call({ method: "sports_254.api.get_warehouses" });
     this.warehouses = (data && data.message) || [];
-    this.selectedWarehouse = null; // always require deliberate selection each session
+    // Auto-select: restore last choice, or pick the only warehouse available.
+    const saved = localStorage.getItem("qs_warehouse");
+    if (saved && this.warehouses.find((w) => w.name === saved)) {
+      this.selectedWarehouse = saved;
+    } else if (this.warehouses.length === 1) {
+      this.selectedWarehouse = this.warehouses[0].name;
+    } else {
+      this.selectedWarehouse = null;
+    }
     this._renderWarehouseToggle();
   }
 
@@ -137,26 +145,12 @@ class QuickSalePage {
       return;
     }
 
-    if (this.warehouses.length === 1) {
-      const warehouse = this.warehouses[0];
-      const active = warehouse.name === this.selectedWarehouse ? "active" : "";
-      $(`<button class="qs-wh-pill ${active}" data-wh="${warehouse.name}">${frappe.utils.escape_html(warehouse.warehouse_name)}</button>`)
-        .on("click", (e) => {
-          this.selectedWarehouse = $(e.currentTarget).data("wh");
-          this._renderWarehouseToggle();
-          this._refreshFeed();
-          this._refreshAllItemStock();
-        })
-        .appendTo($toggle);
-      this._updateFormState();
-      return;
-    }
-
     this.warehouses.forEach((w) => {
       const active = w.name === this.selectedWarehouse ? "active" : "";
       $(`<button class="qs-wh-pill ${active}" data-wh="${w.name}">${frappe.utils.escape_html(w.warehouse_name)}</button>`)
         .on("click", (e) => {
           this.selectedWarehouse = $(e.currentTarget).data("wh");
+          localStorage.setItem("qs_warehouse", this.selectedWarehouse);
           this._renderWarehouseToggle();
           this._refreshFeed();
           this._refreshAllItemStock();
