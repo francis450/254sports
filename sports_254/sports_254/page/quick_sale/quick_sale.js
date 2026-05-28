@@ -75,14 +75,14 @@ frappe.pages["quick-sale"].on_page_load = function (wrapper) {
     <section class="qs-feed-panel">
       <div class="qs-feed-header">
         <div class="qs-feed-header-top">
-          <div class="qs-feed-title" id="qs-feed-title">Today's Sales</div>
+          <div class="qs-feed-title" id="qs-feed-title">All Sales</div>
           <div class="qs-feed-daily-total" id="qs-daily-total">KES 0.00</div>
         </div>
         <div class="qs-feed-period-tabs" id="qs-feed-period-tabs">
-          <button class="qs-period-tab active" data-period="today">Today</button>
+          <button class="qs-period-tab active" data-period="all">All</button>
+          <button class="qs-period-tab" data-period="today">Today</button>
           <button class="qs-period-tab" data-period="week">This Week</button>
           <button class="qs-period-tab" data-period="month">This Month</button>
-          <button class="qs-period-tab" data-period="all">All</button>
         </div>
       </div>
       <div class="qs-feed-list" id="qs-feed-list">
@@ -105,7 +105,7 @@ class QuickSalePage {
     this.warehouses = [];
     this.selectedWarehouse = null;
     this.paymentMode = "Cash";
-    this.feedPeriod = "today";
+    this.feedPeriod = "all";
     this.items = [];
     this._init();
   }
