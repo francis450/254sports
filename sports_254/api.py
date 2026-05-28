@@ -249,10 +249,31 @@ def mark_invoice_paid(invoice_name, payment_mode):
     return {"payment_entry": pe.name, "invoice": invoice_name}
 
 
+@frappe.whitelist(methods=["POST"])
+def cancel_quick_sale(invoice_name):
+    """Cancel a submitted Sales Invoice and its linked Payment Entries."""
+    payments = frappe.get_all(
+        "Payment Entry Reference",
+        filters={"reference_name": invoice_name, "docstatus": 1},
+        fields=["parent"],
+    )
+    for p in payments:
+        pe = frappe.get_doc("Payment Entry", p.parent)
+        if pe.docstatus == 1:
+            pe.cancel()
+
+    inv = frappe.get_doc("Sales Invoice", invoice_name)
+    if inv.docstatus != 1:
+        frappe.throw(_("{0} is not a submitted invoice.").format(invoice_name))
+    inv.cancel()
+    frappe.db.commit()
+    return {"cancelled": invoice_name}
+
+
 @frappe.whitelist()
 def get_period_sales(warehouse, period="today"):
     """Return Sales Invoices for the given warehouse within the requested period.
-    period: "today" | "week" (Mon–today) | "month" (1st–today)
+    period: "today" | "week" (Mon–today) | "month" (1st–today) | "all"
     """
     _require_allowed_warehouse(warehouse, _("You do not have permission to access warehouse {0}."))
     today = nowdate()
@@ -261,6 +282,8 @@ def get_period_sales(warehouse, period="today"):
         from_date = add_days(today, -getdate(today).weekday())  # rewind to Monday
     elif period == "month":
         from_date = str(get_first_day(today))
+    elif period == "all":
+        from_date = "2000-01-01"
     else:
         from_date = today
 

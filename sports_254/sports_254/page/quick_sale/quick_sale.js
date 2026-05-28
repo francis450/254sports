@@ -82,6 +82,7 @@ frappe.pages["quick-sale"].on_page_load = function (wrapper) {
           <button class="qs-period-tab active" data-period="today">Today</button>
           <button class="qs-period-tab" data-period="week">This Week</button>
           <button class="qs-period-tab" data-period="month">This Month</button>
+          <button class="qs-period-tab" data-period="all">All</button>
         </div>
       </div>
       <div class="qs-feed-list" id="qs-feed-list">
@@ -172,6 +173,7 @@ class QuickSalePage {
       today: "Today's Sales",
       week: "This Week's Sales",
       month: "This Month's Sales",
+      all: "All Sales",
     };
     $("#qs-feed-period-tabs").on("click", ".qs-period-tab", function () {
       $(".qs-period-tab").removeClass("active");
@@ -444,7 +446,8 @@ class QuickSalePage {
     const self = this;
     const $list = $("#qs-feed-list").empty();
     if (!invoices.length) {
-      $list.html('<div class="qs-feed-empty">No sales recorded today.</div>');
+      const emptyMsg = this.feedPeriod === "today" ? "No sales recorded today." : "No sales found.";
+      $list.html(`<div class="qs-feed-empty">${emptyMsg}</div>`);
       $("#qs-daily-total").text("KES 0.00");
       return;
     }
@@ -466,6 +469,8 @@ class QuickSalePage {
               data-amount="${inv.outstanding_amount}"
               title="Record payment for this invoice">Mark Paid</button>`
         : "";
+      const delBtn = `<button class="qs-del-sale-btn" data-invoice="${frappe.utils.escape_html(inv.name)}"
+            title="Cancel this sale">Delete</button>`;
       const $row = $(`<div class="qs-feed-row" data-invoice="${frappe.utils.escape_html(inv.name)}">
           <div class="qs-feed-row-left">
             <div class="qs-feed-customer">${frappe.utils.escape_html(inv.customer)}</div>
@@ -475,6 +480,7 @@ class QuickSalePage {
             <div class="qs-feed-amount">KES ${format_number(inv.grand_total, null, 2)}</div>
             <div class="qs-feed-meta">${time} ${badge}</div>
             ${markPaidBtn}
+            ${delBtn}
           </div>
          </div>`);
 
@@ -485,6 +491,11 @@ class QuickSalePage {
           $(this).data("customer"),
           parseFloat($(this).data("amount"))
         );
+      });
+
+      $row.find(".qs-del-sale-btn").on("click", function (e) {
+        e.stopPropagation();
+        self._doDeleteSale($(this).data("invoice"));
       });
 
       $row.on("click", function () {
@@ -534,5 +545,29 @@ class QuickSalePage {
     } catch (_) {
       // frappe.call displays the server error automatically
     }
+  }
+
+  _doDeleteSale(invoiceName) {
+    const self = this;
+    frappe.confirm(
+      `Cancel sale <strong>${invoiceName}</strong>? This will reverse the invoice and any linked payment. This cannot be undone.`,
+      async () => {
+        try {
+          const result = await frappe.call({
+            method: "sports_254.api.cancel_quick_sale",
+            args: { invoice_name: invoiceName },
+          });
+          if (result && result.message) {
+            frappe.show_alert(
+              { message: `${invoiceName} cancelled`, indicator: "orange" },
+              5
+            );
+            self._refreshFeed();
+          }
+        } catch (_) {
+          // frappe.call displays the server error automatically
+        }
+      }
+    );
   }
 }
