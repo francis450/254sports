@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>254 Sports — Born Kenyan, Born to Run</title>
+<meta name="description" content="Premium Kenyan running kit by 254 Sports. Tested at altitude in Iten. Born Kenyan, Born to Run.">
+<link rel="stylesheet" href="/assets/sports_254/css/storefront.css">
+</head>
+<body>
+
+<!-- ── Catalog data for JS ── -->
+<script>
+const WA_NUMBER = "{{ wa_number }}";
+const CATALOG = {{ products_json | safe }};
+</script>
+
+<!-- ── STICKY HEADER ── -->
+<header id="site-header">
+  <div class="flag-stripe">
+    <div class="fs-blk"></div><div class="fs-w1"></div>
+    <div class="fs-red"></div><div class="fs-w2"></div>
+    <div class="fs-grn"></div>
+  </div>
+  <div class="header-inner">
+    <div style="display:flex;align-items:center;gap:4px;">
+      <button class="back-btn" id="btn-back" onclick="navigate('home')" style="display:none" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <div id="header-crest" style="display:flex;align-items:center;">
+        <svg viewBox="0 0 100 120" width="34" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 100 L80 20 M18 102 L22 98 M78 22 L82 18" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+          <path d="M80 100 L20 20 M82 102 L78 98 M22 22 L18 18" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+          <path d="M78 18 L83 15 L80 23 Z" fill="#111"/>
+          <path d="M22 18 L17 15 L20 23 Z" fill="#111"/>
+          <path d="M19 99 L15 103 L21 101 Z" fill="#555"/>
+          <path d="M81 99 L85 103 L79 101 Z" fill="#555"/>
+          <path d="M50 10 C68 25,72 55,68 85 C62 105,50 115,50 115 C50 115,38 105,32 85 C28 55,32 25,50 10 Z" fill="#111" stroke="#FFF" stroke-width="1.5"/>
+          <path d="M50 12 C35 26,30 55,34 85 C39 103,50 113,50 113 V12 Z" fill="#E2231A"/>
+          <path d="M44 20 C44 20,48 50,48 85 C48 98,45 105,45 105 H55 C55 105,52 98,52 85 C52 50,56 20,56 20 H44 Z" fill="#111"/>
+          <path d="M38 45 C41 50,41 70,38 75" stroke="#FFF" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M62 45 C59 50,59 70,62 75" stroke="#FFF" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M33 55 C34 65,37 75,41 80 L42 50 Z" fill="#008753"/>
+          <path d="M67 55 C66 65,63 75,59 80 L58 50 Z" fill="#008753"/>
+          <circle cx="50" cy="40" r="3" fill="#FFF"/>
+          <circle cx="50" cy="60" r="3" fill="#FFF"/>
+          <circle cx="50" cy="80" r="3" fill="#FFF"/>
+        </svg>
+      </div>
+    </div>
+
+    <button class="logo" onclick="navigate('home')">
+      <span class="logo-num">254</span>
+      <span class="logo-text">Sports</span>
+    </button>
+
+    <div style="display:flex;align-items:center;gap:6px;">
+      {% if is_guest %}
+      <a href="/login" class="login-btn" title="Staff / Admin Login">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Login
+      </a>
+      {% else %}
+      <a href="/app" class="login-btn login-btn--active" title="Go to ERPNext Dashboard">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      {% endif %}
+      <div class="cart-wrap-btn">
+        <button class="icon-btn" onclick="openCart()" aria-label="Cart">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </button>
+        <span class="cart-badge" id="cart-badge">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════ VIEW: HOME ══════════════════════════════════════ -->
+<div id="view-home" class="view active">
+  <main class="home-grid">
+
+    <!-- ── LEFT: Hero Panel (sticky on desktop) ── -->
+    <aside class="hero-panel">
+      <div class="hero-sash"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-maze-bg">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="gmaze" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M10 10 L50 10 L50 50 L30 50 L30 30 L40 30 L40 40 L44 40 L44 26 L26 26 L26 54 L54 54 L54 6 L6 6 L6 54 L10 54 Z" fill="none" stroke="#fff" stroke-width="2"/>
+              <path d="M30 10 L30 18 L18 18 L18 42 L22 42 L22 22 L34 22 L34 10 Z" fill="none" stroke="#fff" stroke-width="1.4"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#gmaze)"/>
+        </svg>
+      </div>
+
+      <div class="hero-content">
+        <!-- Top badges -->
+        <div class="hero-badges">
+          <span class="hero-badge">Kenyan Heritage Apparel</span>
+          <span class="hero-active">
+            <span class="pulse-dot"></span>ACTIVE
+          </span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="hero-headline">Born Kenyan,<br>Born to Run</h1>
+        <p class="hero-sub">
+          Premium Kenyan running kit for road, track and trail. Inspired by the spirit and colours of the Kenyan flag.
+        </p>
+
+        <!-- Carousel -->
+        <div class="hero-carousel" id="hero-carousel">
+          {% for slide in slides %}
+          <img src="{{ slide.src }}" alt="{{ slide.title }}" class="{% if loop.first %}active{% endif %}">
+          {% endfor %}
+          <div class="carousel-gradient"></div>
+          <div class="carousel-caption">
+            <div class="carousel-label">254 Active Lookbook</div>
+            <div class="carousel-title" id="carousel-title">{{ slides[0].title }}</div>
+            <div class="carousel-desc" id="carousel-desc">{{ slides[0].desc }}</div>
+          </div>
+          <div class="carousel-nav">
+            <button class="carousel-btn" onclick="carouselPrev()" aria-label="Prev">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="carousel-btn" onclick="carouselNext()" aria-label="Next">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="carousel-dots" id="carousel-dots">
+            {% for slide in slides %}
+            <span class="carousel-dot {% if loop.first %}active{% endif %}"></span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Quote -->
+        <div class="hero-quote">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E2231A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+          <p class="hero-quote-text" id="hero-quote-text">No human is limited. — Eliud Kipchoge</p>
+        </div>
+
+        <div class="hero-assurance">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A86B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          M-Pesa Checkout &amp; WhatsApp Channel Ready
+        </div>
+      </div>
+
+      <div class="hero-sash-bar"></div>
+    </aside>
+
+    <!-- ── RIGHT: Products ── -->
+    <section class="products-panel">
+
+      <!-- Feature bar -->
+      <div class="feature-bar">
+        <div class="feature-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00A86B" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Premium Athletic Cuts
+        </div>
+        <div class="feature-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E2231A" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Made in Kenya
+        </div>
+        <div class="feature-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00A86B" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          WhatsApp Channel Ready
+        </div>
+      </div>
+
+      <!-- Grid header -->
+      <div class="grid-header">
+        <h2 class="grid-title">
+          <span class="grid-title-line"></span>
+          254 Sports &bull; Featured Items
+        </h2>
+        <span style="font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.2em;color:var(--g400);text-transform:uppercase;display:none;" class="show-sm">GRID</span>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E2231A" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+          Filter Catalog
+        </div>
+        <div class="filter-groups">
+          <div class="filter-group">
+            <div class="filter-group-label">Gender cut</div>
+            <div class="filter-pills" role="group">
+              <button class="filter-pill active" onclick="setGender('All',this)">All</button>
+              <button class="filter-pill" onclick="setGender('Men',this)">Men</button>
+              <button class="filter-pill" onclick="setGender('Women',this)">Women</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <div class="filter-group-label">Base Colorway</div>
+            <div class="filter-pills" role="group">
+              <button class="filter-pill active" onclick="setColor('All',this)">All</button>
+              <button class="filter-pill" onclick="setColor('Red',this)">
+                <span class="color-dot" style="background:#E2231A;border:1px solid rgba(255,255,255,.3)"></span>Red
+              </button>
+              <button class="filter-pill" onclick="setColor('White',this)">
+                <span class="color-dot" style="background:white;border:1px solid #ccc"></span>White
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="product-grid" id="product-grid">
+        {% for p in products %}
+        <div class="product-card"
+             data-gender="{{ p.gender }}"
+             data-color="{{ p.colorway }}"
+             data-idx="{{ loop.index0 }}"
+             onclick="openProduct({{ loop.index0 }})">
+          <div class="product-img-wrap">
+            <img src="{{ p.image }}" alt="{{ p.item_name }}" loading="lazy">
+            <div class="badges">
+              {% if p.in_stock %}
+              <span class="badge badge-in">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                In Stock
+              </span>
+              {% else %}
+              <span class="badge badge-out">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Sold Out
+              </span>
+              {% endif %}
+              {% if p.is_set %}
+              <span class="badge badge-set">Top + Shorts Set</span>
+              {% endif %}
+            </div>
+            <div class="gender-tag">{{ p.gender }} Cut</div>
+          </div>
+          <div class="product-info">
+            <div class="product-meta">
+              <span class="product-sku">{{ p.item_code }}</span>
+              <span class="cw-tag {% if p.colorway == 'Red' %}cw-red{% else %}cw-white{% endif %}">{{ p.colorway }}</span>
+            </div>
+            <div class="product-name">{{ p.item_name }}</div>
+            <div class="product-desc">{{ p.description }}</div>
+            <div class="product-footer">
+              <div>
+                <div class="price-label">Price</div>
+                <div class="price-value">KES {{ "{:,}".format(p.price) }}</div>
+              </div>
+              <div class="product-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="no-results" id="no-results">
+          <p>No Matching Items</p>
+          <p>Try loosening your filter selections.</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="site-footer">
+    <div class="footer-green-line"></div>
+    <div class="footer-inner">
+      <div class="footer-crest-wrap">
+        <div class="footer-crest-bg">
+          <svg viewBox="0 0 100 120" width="40" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 100 L80 20" stroke="rgba(255,255,255,.7)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M80 100 L20 20" stroke="rgba(255,255,255,.7)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M50 10 C68 25,72 55,68 85 C62 105,50 115,50 115 C50 115,38 105,32 85 C28 55,32 25,50 10 Z" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+            <path d="M50 12 C35 26,30 55,34 85 C39 103,50 113,50 113 V12 Z" fill="#E2231A" opacity=".8"/>
+            <circle cx="50" cy="40" r="3" fill="#FFF" opacity=".8"/>
+            <circle cx="50" cy="60" r="3" fill="#FFF" opacity=".8"/>
+            <circle cx="50" cy="80" r="3" fill="#FFF" opacity=".8"/>
+          </svg>
+        </div>
+        <div class="footer-brand-name">254 Sports</div>
+        <div class="footer-tagline">Born Kenyan, Born to Run</div>
+      </div>
+      <p class="footer-mission">Premium running kit rooted in Kenyan heritage. Designed for road, track and trail — inspired by the colours and spirit of the Kenyan flag.</p>
+      <div class="footer-grid">
+        <div class="footer-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00A86B" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div class="footer-item-title">Based In</div>
+          <div class="footer-item-text">Nairobi, Kenya</div>
+        </div>
+        <div class="footer-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E2231A" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <div class="footer-item-title">Inquiries</div>
+          <div class="footer-item-text">run@254sports.co.ke</div>
+        </div>
+        <div class="footer-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="footer-item-title">Order &amp; Pay</div>
+          <div class="footer-item-text">WhatsApp &amp; M-Pesa Supported</div>
+        </div>
+      </div>
+      <p class="footer-copy">© 2026 254 Sports. All rights reserved. Made with pride in Kenya 🇰🇪</p>
+      <p style="margin-top:10px"><a href="/app" style="font-family:var(--font-mono);font-size:9px;color:var(--g800);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;opacity:.5;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">Staff Login</a></p>
+    </div>
+  </footer>
+</div><!-- /view-home -->
+
+
+<!-- ══════════════════════════════════════ PRODUCT MODAL ══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">&#x2715;</button>
+    <div class="modal-inner">
+      <div class="modal-img-wrap" style="position:relative;">
+        <div id="modal-slideshow" style="position:relative;width:100%;height:100%;"></div>
+        <button class="carousel-btn" id="modal-prev" onclick="modalSlide(-1)" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:20;display:none;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="carousel-btn" id="modal-next" onclick="modalSlide(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:20;display:none;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div id="modal-dots" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:20;"></div>
+      </div>
+      <div class="modal-info">
+        <div class="modal-sku" id="modal-sku"></div>
+        <div class="modal-name" id="modal-name"></div>
+        <div class="modal-price" id="modal-price"></div>
+        <p class="modal-desc" id="modal-desc"></p>
+        <div class="size-section-label">Select Size</div>
+        <div class="sizes-row" id="modal-sizes"></div>
+        <button class="btn-add-cart" id="btn-add-cart" onclick="addToCartFromModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+        <button class="btn-wa-direct" id="btn-wa-direct" onclick="orderDirectWA()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Order Direct on WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════ CART SIDEBAR ══════════════════════════════════════ -->
+<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <span class="cart-title">Your Cart</span>
+    <button class="icon-btn" onclick="closeCart()" aria-label="Close cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cart-items" id="cart-items-list"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-val" id="cart-total-val">KES 0</span>
+    </div>
+    <button class="btn-checkout-wa" onclick="checkoutWA()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Checkout on WhatsApp
+    </button>
+    <button class="btn-keep-shopping" onclick="closeCart()">Continue Shopping</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════ SUCCESS OVERLAY ══════════════════════════════════════ -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <div class="success-sash"></div>
+    <div class="success-icon">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <h1 class="success-title">Order Dispatched!</h1>
+    <p class="success-sub">Born Kenyan, Born to Run</p>
+    <div class="success-steps">
+      <div class="success-steps-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00A86B" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.46 12a19.79 19.79 0 01-3-8.59A2 2 0 012.39 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 9.4a16 16 0 006.69 6.69l1.41-1.41a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        Next Steps
+      </div>
+      <p><strong>1. WhatsApp Redirected:</strong> Your order has been pre-packed and sent to the 254 Runner team.</p>
+      <p style="margin-top:8px"><strong>2. Confirmation:</strong> The team will confirm delivery address and coordinate M-Pesa or cash-on-delivery.</p>
+      <p style="margin-top:8px"><strong>3. Fulfillment:</strong> Your kit ships within 1–3 business days from Nairobi.</p>
+    </div>
+    <button class="btn-success-back" onclick="closeSuccess()">Return to Store</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════ JAVASCRIPT ══════════════════════════════════════ -->
+<script>
+// ── State ──
+var cart = [];
+var genderFilter = 'All';
+var colorFilter = 'All';
+var slideIdx = 0;
+var quoteIdx = 0;
+var modalProduct = null;
+var modalSize = null;
+
+var SLIDES = [
+  {% for slide in slides %}
+  { src: "{{ slide.src }}", title: "{{ slide.title }}", desc: "{{ slide.desc }}" }{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
+
+var QUOTES = [
+  "No human is limited. — Eliud Kipchoge",
+  "Speed only comes from consistent, humble work in the high hills.",
+  "Run with your heart, not just your legs. This is Iten wisdom.",
+  "When you feel pain, keep running. The mountain always yields."
+];
+
+// ── Carousel ──
+function updateCarousel() {
+  var imgs = document.querySelectorAll('#hero-carousel img');
+  var dots = document.querySelectorAll('.carousel-dot');
+  imgs.forEach(function(img, i) { img.classList.toggle('active', i === slideIdx); });
+  dots.forEach(function(d, i) { d.classList.toggle('active', i === slideIdx); });
+  document.getElementById('carousel-title').textContent = SLIDES[slideIdx].title;
+  document.getElementById('carousel-desc').textContent = SLIDES[slideIdx].desc;
+}
+function carouselNext() { slideIdx = (slideIdx + 1) % SLIDES.length; updateCarousel(); }
+function carouselPrev() { slideIdx = (slideIdx - 1 + SLIDES.length) % SLIDES.length; updateCarousel(); }
+setInterval(carouselNext, 5500);
+
+// ── Quotes ──
+function nextQuote() {
+  quoteIdx = (quoteIdx + 1) % QUOTES.length;
+  var el = document.getElementById('hero-quote-text');
+  el.style.opacity = '0';
+  setTimeout(function() { el.textContent = '"' + QUOTES[quoteIdx] + '"'; el.style.opacity = '1'; }, 400);
+}
+setInterval(nextQuote, 7000);
+
+// ── Filters ──
+function setGender(val, btn) {
+  genderFilter = val;
+  btn.closest('.filter-pills').querySelectorAll('.filter-pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  applyFilters();
+}
+function setColor(val, btn) {
+  colorFilter = val;
+  btn.closest('.filter-pills').querySelectorAll('.filter-pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  applyFilters();
+}
+function applyFilters() {
+  var cards = document.querySelectorAll('.product-card');
+  var visible = 0;
+  cards.forEach(function(card) {
+    var g = card.dataset.gender;
+    var c = card.dataset.color;
+    var show = (genderFilter === 'All' || g === genderFilter) && (colorFilter === 'All' || c === colorFilter);
+    card.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  document.getElementById('no-results').classList.toggle('visible', visible === 0);
+}
+
+// ── Product Modal ──
+var modalSlideIdx = 0;
+var modalImages = [];
+
+function openProduct(idx) {
+  var p = CATALOG[idx];
+  modalProduct = p;
+  modalSize = null;
+  modalSlideIdx = 0;
+  modalImages = p.images && p.images.length ? p.images : [p.image];
+
+  // Build slideshow
+  var ss = document.getElementById('modal-slideshow');
+  ss.innerHTML = modalImages.map(function(src, i) {
+    return '<img src="' + src + '" alt="' + p.item_name + '" style="position:' + (i === 0 ? 'relative' : 'absolute') + ';inset:0;width:100%;height:100%;object-fit:cover;opacity:' + (i === 0 ? '1' : '0') + ';transition:opacity .4s;">';
+  }).join('');
+
+  // Show nav only when >1 image
+  var showNav = modalImages.length > 1;
+  document.getElementById('modal-prev').style.display = showNav ? 'flex' : 'none';
+  document.getElementById('modal-next').style.display = showNav ? 'flex' : 'none';
+
+  // Dots
+  var dotsEl = document.getElementById('modal-dots');
+  dotsEl.innerHTML = showNav ? modalImages.map(function(_, i) {
+    return '<span style="width:' + (i===0?'16':'6') + 'px;height:6px;border-radius:3px;background:' + (i===0?'#fff':'rgba(255,255,255,.45)') + ';transition:all .3s;"></span>';
+  }).join('') : '';
+
+  document.getElementById('modal-sku').textContent = p.item_code;
+  document.getElementById('modal-name').textContent = p.item_name;
+  document.getElementById('modal-price').innerHTML = '<span class="modal-currency">KES </span>' + p.price.toLocaleString('en-KE');
+  document.getElementById('modal-desc').textContent = p.description;
+
+  var sizesEl = document.getElementById('modal-sizes');
+  sizesEl.innerHTML = '';
+  (p.sizes || []).forEach(function(s) {
+    var b = document.createElement('button');
+    b.className = 'size-btn';
+    b.textContent = s;
+    b.onclick = function() {
+      sizesEl.querySelectorAll('.size-btn').forEach(function(x) { x.classList.remove('selected'); });
+      b.classList.add('selected');
+      modalSize = s;
+    };
+    sizesEl.appendChild(b);
+  });
+
+  var addBtn = document.getElementById('btn-add-cart');
+  addBtn.innerHTML = p.in_stock
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> Add to Cart'
+    : 'Out of Stock';
+  addBtn.disabled = !p.in_stock;
+  addBtn.style.opacity = p.in_stock ? '1' : '0.5';
+
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function modalSlide(dir) {
+  var imgs = document.querySelectorAll('#modal-slideshow img');
+  var dots = document.querySelectorAll('#modal-dots span');
+  imgs[modalSlideIdx].style.opacity = '0';
+  imgs[modalSlideIdx].style.position = 'absolute';
+  if (dots[modalSlideIdx]) { dots[modalSlideIdx].style.width = '6px'; dots[modalSlideIdx].style.background = 'rgba(255,255,255,.45)'; }
+  modalSlideIdx = (modalSlideIdx + dir + modalImages.length) % modalImages.length;
+  imgs[modalSlideIdx].style.opacity = '1';
+  imgs[modalSlideIdx].style.position = 'relative';
+  if (dots[modalSlideIdx]) { dots[modalSlideIdx].style.width = '16px'; dots[modalSlideIdx].style.background = '#fff'; }
+}
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-backdrop') && !e.currentTarget.classList.contains('modal-close')) return;
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── Cart ──
+function addToCartFromModal() {
+  if (!modalProduct || !modalProduct.in_stock) return;
+  var size = modalSize || (modalProduct.sizes && modalProduct.sizes[0]) || 'One Size';
+  var existing = cart.find(function(i) { return i.item_code === modalProduct.item_code && i.size === size; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ item_code: modalProduct.item_code, item_name: modalProduct.item_name, price: modalProduct.price, size: size, image: modalProduct.image, qty: 1 });
+  }
+  updateBadge();
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  openCart();
+}
+function removeFromCart(idx) {
+  cart.splice(idx, 1);
+  updateBadge();
+  renderCartSidebar();
+}
+function updateBadge() {
+  var total = cart.reduce(function(s, i) { return s + i.qty; }, 0);
+  var badge = document.getElementById('cart-badge');
+  badge.textContent = total;
+  badge.classList.toggle('visible', total > 0);
+}
+function getCartTotal() {
+  return cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+}
+function renderCartSidebar() {
+  var el = document.getElementById('cart-items-list');
+  var footer = document.getElementById('cart-footer');
+  if (cart.length === 0) {
+    el.innerHTML = '<div class="cart-empty"><p>Your cart is empty</p><p>Add items from the store to start your order.</p></div>';
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = 'block';
+  el.innerHTML = cart.map(function(item, idx) {
+    return '<div class="cart-item">' +
+      '<img class="cart-item-img" src="' + item.image + '" alt="' + item.item_name + '">' +
+      '<div class="cart-item-body">' +
+        '<div class="cart-item-name">' + item.item_name + '</div>' +
+        '<div class="cart-item-meta">Size: ' + item.size + ' &bull; Qty: ' + item.qty + '</div>' +
+        '<div class="cart-item-price">KES ' + (item.price * item.qty).toLocaleString('en-KE') + '</div>' +
+      '</div>' +
+      '<button class="cart-item-remove" onclick="removeFromCart(' + idx + ')" aria-label="Remove">&#x2715;</button>' +
+    '</div>';
+  }).join('');
+  document.getElementById('cart-total-val').textContent = 'KES ' + getCartTotal().toLocaleString('en-KE');
+}
+function openCart() {
+  renderCartSidebar();
+  document.getElementById('cart-sidebar').classList.add('open');
+  document.getElementById('sidebar-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  document.getElementById('cart-sidebar').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── WhatsApp Checkout ──
+function erpnextCode(item_code, size) {
+  return item_code + '-' + size;
+}
+function orderDirectWA() {
+  if (!modalProduct) return;
+  var size = modalSize || (modalProduct.sizes && modalProduct.sizes[0]) || 'One Size';
+  var sku = erpnextCode(modalProduct.item_code, size);
+  var msg = 'Hi 254 Sports! I\'d like to order:\n\n';
+  msg += '• ' + modalProduct.item_name + '\n';
+  msg += '  Size: ' + size + ' (SKU: ' + sku + ')\n';
+  msg += '  Price: KES ' + modalProduct.price.toLocaleString('en-KE') + '\n\n';
+  msg += 'Please confirm availability and delivery/M-Pesa payment details. Thank you!';
+  window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('success-overlay').classList.add('open');
+}
+function checkoutWA() {
+  if (cart.length === 0) return;
+  var msg = 'Hi 254 Sports! I\'d like to place an order:\n\n';
+  cart.forEach(function(item) {
+    var sku = erpnextCode(item.item_code, item.size);
+    msg += '• ' + item.item_name + '\n';
+    msg += '  Size: ' + item.size + ' | SKU: ' + sku + ' | Qty: ' + item.qty + ' | KES ' + (item.price * item.qty).toLocaleString('en-KE') + '\n';
+  });
+  msg += '\nTotal: KES ' + getCartTotal().toLocaleString('en-KE') + '\n\n';
+  msg += 'Please confirm delivery address and M-Pesa payment. Thank you!';
+  window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+  cart = [];
+  updateBadge();
+  closeCart();
+  document.getElementById('success-overlay').classList.add('open');
+}
+function closeSuccess() {
+  document.getElementById('success-overlay').classList.remove('open');
+}
+
+// ── Navigation helper ──
+function navigate(view) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.getElementById('view-' + view).classList.add('active');
+  document.getElementById('btn-back').style.display = view === 'home' ? 'none' : 'flex';
+  document.getElementById('header-crest').style.display = view === 'home' ? 'flex' : 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
